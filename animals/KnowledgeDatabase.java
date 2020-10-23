@@ -15,16 +15,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KnowledgeDatabase {
     private Gson gson;
     private JsonObject database;
-    private final String path = "animals.";
+    private final String path = "animals";
 
     KnowledgeDatabase() {
         gson = new Gson();
@@ -87,7 +84,8 @@ public class KnowledgeDatabase {
 
     void loadDatabase(String type) {
         try {
-            String content = Files.readAllLines(Paths.get(path + type), StandardCharsets.US_ASCII)
+            String content = Files.readAllLines(Paths.get(path + ResourceBundle
+                    .getBundle("App").getString("prefix") + "." + type), StandardCharsets.UTF_8)
                     .stream().collect(Collectors.joining("\n"));
             if (type.equals("json")) {
                 JsonParser parser = new JsonParser();
@@ -131,7 +129,8 @@ public class KnowledgeDatabase {
 
     void saveDatabase(String type) {
         String json = gson.toJson(database);
-        saveFile(type, json, "animals.");
+        saveFile(type, json, "animals" + ResourceBundle
+                .getBundle("App").getString("prefix") + ".");
 
         try {
             if (type.equals("xml")) {
@@ -139,11 +138,13 @@ public class KnowledgeDatabase {
                 ObjectMapper xmlMapper = new XmlMapper();
                 JsonNode tree = mapper.readTree(json);
                 String xml = xmlMapper.writer().withRootName("root").writeValueAsString(tree);
-                saveFile("xml", xml, "animals.");
+                saveFile("xml", xml, "animals" + ResourceBundle
+                        .getBundle("App").getString("prefix") + ".");
             } else if (type.equals("yaml")) {
                 JsonNode jsonNodeTree = new ObjectMapper().readTree(json);
                 String yaml = new YAMLMapper().writeValueAsString(jsonNodeTree);
-                saveFile("yaml", yaml, "animals.");
+                saveFile("yaml", yaml, "animals" + ResourceBundle
+                        .getBundle("App").getString("prefix") + ".");
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();

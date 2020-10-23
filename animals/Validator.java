@@ -15,9 +15,9 @@ public class Validator {
     private ResourceBundle bundle = ResourceBundle.getBundle("App");
 
     String validateAnimal(String animal) {
-        if (animal.startsWith(bundle.getString("indefinite-article-consonant") + " ")) {
+        if (animal.startsWith(bundle.getString("indefinite-article-consonant"))) {
             return bundle.getString("indefinite-article-consonant");
-        } else if (animal.startsWith(bundle.getString("indefinite-article-vowel") + " ")) {
+        } else if (animal.startsWith(bundle.getString("indefinite-article-vowel"))) {
             return bundle.getString("indefinite-article-vowel");
         } else {
             if ("eaiou".indexOf(animal.charAt(0)) >= 0) {
@@ -63,10 +63,10 @@ public class Validator {
 
     String generateStatement(String distinct, String animal, boolean isNegation) {
         String modifiedAnimal = animal;
-        if (modifiedAnimal.startsWith(bundle.getString("indefinite-article-consonant") + " ")) {
-            modifiedAnimal = modifiedAnimal.substring(bundle.getString("indefinite-article-consonant").length() + 1);
-        } else if (modifiedAnimal.startsWith(bundle.getString("indefinite-article-vowel") + " ")) {
-            modifiedAnimal = modifiedAnimal.substring(bundle.getString("indefinite-article-vowel").length() + 1);
+        if (modifiedAnimal.startsWith(bundle.getString("indefinite-article-consonant"))) {
+            modifiedAnimal = modifiedAnimal.substring(bundle.getString("indefinite-article-consonant").length());
+        } else if (modifiedAnimal.startsWith(bundle.getString("indefinite-article-vowel") )) {
+            modifiedAnimal = modifiedAnimal.substring(bundle.getString("indefinite-article-vowel").length());
         }
 
         String verb = "";
@@ -80,6 +80,9 @@ public class Validator {
         } else if (distinct.contains(bundle.getString("is-verb"))) {
             verb = bundle.getString("is-verb");
             negationVerb = bundle.getString("is-verb-negation");
+        } else if (distinct.contains(bundle.getString("live-verb"))) {
+            verb = bundle.getString("live-verb");
+            negationVerb = bundle.getString("live-verb-negation");
         }
 
         String[] animalFact = distinct.split(verb);
@@ -95,6 +98,7 @@ public class Validator {
     private String generateQuestionOnStatement(String distinct) {
         String question = "";
         String verb = "";
+
         if (distinct.contains(bundle.getString("can-verb"))) {
             question = bundle.getString("can-question");
             verb = bundle.getString("can-verb");
@@ -102,6 +106,7 @@ public class Validator {
             question = bundle.getString("has-question");
             verb = bundle.getString("has-verb");
         } else if (distinct.contains(bundle.getString("is-verb"))) {
+
             question = bundle.getString("is-question");
             verb = bundle.getString("is-verb");
         }
@@ -110,8 +115,8 @@ public class Validator {
         return String.format("%s%s?", question, animalFact);
     }
 
-    String generateQuestion(String distinct) {
-        if (!distinct.startsWith(bundle.getString("it-statement"))) {
+    String generateQuestion(String distinct, boolean exists) {
+        if (!exists) {
             return String.format("%s %s?", bundle.getString("is-question"), distinct);
         } else {
             return generateQuestionOnStatement(distinct);

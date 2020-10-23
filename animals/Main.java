@@ -16,7 +16,7 @@ public class Main {
             extension = args[1];
         }
 
-        File dbFile = new File("animals." + extension);
+        File dbFile = new File("animals" + appResource.getString("prefix") + "." + extension);
         if (args.length != 0) {
             guessingGame.setType(args[1]);
         }

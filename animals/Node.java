@@ -76,11 +76,9 @@ public class Node {
             pair = queue.peek();
             queue.remove();
             if (pair.n.getNo() == null) {
-                depths.add(pair.i);
+                depths.add(pair.i - 1);
             } else {
-                depths.add(pair.i);
-                depths.add(pair.i);
-                depths.add(pair.i);
+                //depths.add(pair.i);
                 queue.add(new Pair(pair.n.getYes(), pair.i + 1));
                 queue.add(new Pair(pair.n.getNo(), pair.i + 1));
             }

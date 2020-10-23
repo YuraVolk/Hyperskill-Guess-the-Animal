@@ -5,7 +5,7 @@ public class App extends ListResourceBundle {
     protected Object[][] getContents() {
         return new Object[][]{
                 {"system-intro", "Welcome to the animals expert system!"},
-                {"bye", "Have a nice day!"},
+                {"bye", "Bye!"},
                 {"fact-start", "Specify a fact that distinguishes"},
                 {"fact-middle", "from"},
                 {"examples", "The sentence should be of the following templates:\n" +
@@ -16,15 +16,18 @@ public class App extends ListResourceBundle {
                 {"can-verb", "can"},
                 {"has-verb", "has"},
                 {"is-verb", "is"},
+                {"live-verb", "lives"},
                 {"can-verb-negation", "cannot"},
                 {"has-verb-negation", "doesn't have"},
                 {"is-verb-negation", "isn't"},
+                {"live-verb-negation", "doesn't live"},
                 {"it-statement", "It"},
                 {"example-statements", "Some examples of a statement are:\n" +
                         "Is it a shy animal?\nDoes it have a horn?\n"},
                 {"can-question", "Can it"},
                 {"has-question", "Does it have"},
                 {"is-question", "Is it"},
+                {"live-question", "Is it living"},
                 {"menu", "What do you want to do:\n" +
                         "1. Play the guessing game\n" +
                         "2. List of all animals\n" +
@@ -45,16 +48,17 @@ public class App extends ListResourceBundle {
                 {"no-facts-boolean", "false"},
                 {"statement-correctness", "Is the statement correct for the"},
                 {"definite-article", "the"},
-                {"indefinite-article-vowel", "an"},
-                {"indefinite-article-consonant", "a"},
+                {"definite-article-uppercase", "The"},
+                {"indefinite-article-vowel", "an "},
+                {"indefinite-article-consonant", "a "},
                 {"play-again", "Should we play again?"},
                 {"starter-question", "Good morning!\n" +
                         "\n" +
-                        "I want ot learn about animals.\n" +
+                        "I want to learn about animals.\n" +
                         "Which animal do you like most?"},
                 {"learnt-facts", "I remember the following facts about animals: "},
                 {"starter-game-question", "Let's play a game!\n" +
-                                "You think of an animal, and I guess it.\n" +
+                                "You think of an animal, and I guess it.\n\n" +
                                 "Press enter when you're ready."},
                 {"learn-finish-starter", "Nice! I've learned so much about animals!\n" +
                                 "Would you like to play again?"},
@@ -63,7 +67,9 @@ public class App extends ListResourceBundle {
                 {"victory", "I won!"},
                 {"positive-answers", new String[] {"y", "yes", "yeah", "yep", "sure", "right", "affirmative", "correct", "indeed", "you bet", "exactly", "you said it"}},
                 {"negative-answers", new String[] {"n", "no", "no way", "nope", "nah", "negative", "i don't think so", "yeah no"}},
-                {"error-menu", "Please enter the number from 0 up to 4"}
+                {"error-menu", "Please enter the number from 0 up to 4"},
+                {"prefix", ""},
+                {"facts", "Facts about the"}
         };
     }
 }

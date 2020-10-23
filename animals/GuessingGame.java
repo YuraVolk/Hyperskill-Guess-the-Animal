@@ -25,7 +25,8 @@ public class GuessingGame {
             distinct = scanner.nextLine().toLowerCase();
             if (distinct.startsWith(appResource.getString("can-question"))
                     || distinct.startsWith(appResource.getString("has-question"))
-                    || distinct.startsWith(appResource.getString("is-question"))) {
+                    || distinct.startsWith(appResource.getString("is-question"))
+                    || distinct.startsWith(appResource.getString("live-question"))) {
                 System.out.printf("%s\n%s",
                         appResource.getString("yes-or-no"),
                         appResource.getString("example-statements"));
@@ -33,7 +34,8 @@ public class GuessingGame {
             }
             if (distinct.contains(appResource.getString("can-verb"))
                     || distinct.contains(appResource.getString("has-verb"))
-                    || distinct.contains(appResource.getString("is-verb"))) {
+                    || distinct.contains(appResource.getString("is-verb"))
+                    || distinct.contains(appResource.getString("live-verb"))) {
                 break;
             }
             System.out.printf("%s\n%s",
@@ -78,12 +80,12 @@ public class GuessingGame {
 
     private void printStatistics() {
         System.out.println(appResource.getString("tree-stats-title"));
-        int totalAnimals = 5;
-        int totalNumber = 9;
-        int totalStatements = 4;
-        int totalDepth = 3;
-        int minDepth = 2; // TODO rework
-        double averageDepth = 2.4;
+        int totalAnimals = database.getAnimals().size();
+        int totalNumber = totalAnimals * 2 - 1;
+        int totalStatements = totalAnimals - 1;
+        int totalDepth = database.getDepth() / 2;
+        int minDepth = 1; // TODO Rework
+        double averageDepth = database.getSumDepth();
 
         System.out.printf("- %s%s\n" +
                 "- %s%s\n" +
@@ -91,7 +93,7 @@ public class GuessingGame {
                 "- %s%s\n" +
                 "- %s%s\n" +
                 "- %s%s\n" +
-                "- %s%s\n",
+                "- %s%.1f\n",
                 appResource.getString("tree-stats-root"),
                 validator.generateStatement(database.get(validator.generateListPath(
                         new ArrayList<>(), "data")), "It", false),
@@ -124,6 +126,7 @@ public class GuessingGame {
                 System.out.printf("%s %s.\n", appResource.getString("no-facts"), animal);
             }
         } else {
+            System.out.printf("%s %s:\n", appResource.getString("facts"), animal);
             for (int i = 0; i < path.size() - 1; i++) {
                 System.out.print("- ");
                 if (path.get(i).getYes().equals(path.get(i + 1))) { // Positive
@@ -142,14 +145,15 @@ public class GuessingGame {
             System.out.println(appResource.getString("starter-game-question"));
             scanner.nextLine();
 
-            if (rootAnimal.startsWith(appResource.getString("indefinite-article-consonant") + " ")) {
-                rootAnimal = rootAnimal.substring(appResource.getString("indefinite-article-consonant").length() + 1);
-            } else if (rootAnimal.startsWith(appResource.getString("indefinite-article-vowel") + " ")) {
-                rootAnimal = rootAnimal.substring(appResource.getString("indefinite-article-vowel").length() + 1);
+            if (rootAnimal.startsWith(appResource.getString("indefinite-article-consonant"))) {
+                rootAnimal = rootAnimal.substring(appResource.getString("indefinite-article-consonant").length());
+            } else if (rootAnimal.startsWith(appResource.getString("indefinite-article-vowel"))) {
+                rootAnimal = rootAnimal.substring(appResource.getString("indefinite-article-vowel").length());
             }
 
-            System.out.println(article.isBlank());
-            System.out.printf("%s %s %s?\n", appResource.getString("is-question"), article.trim(), rootAnimal.trim());
+
+            System.out.printf("%s %s%s?\n", appResource.getString("is-question"), article, rootAnimal);
+
             boolean isTrue = validator.query();
             if (isTrue) {
                 System.out.println(appResource.getString("learn-finish-starter"));
@@ -164,19 +168,19 @@ public class GuessingGame {
             }
         }
 
-        System.out.println("I give up. What animal do you have in mind?");
+        System.out.println(appResource.getString("loss"));
         String secondAnimal = scanner.nextLine().toLowerCase();
         String secondArticle = validator.validateAnimal(secondAnimal);
-        if (secondAnimal.startsWith(appResource.getString("indefinite-article-consonant") + " ")) {
-            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-consonant").length() + 1);
-        } else if (secondAnimal.startsWith(appResource.getString("indefinite-article-vowel") + " ")) {
-            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-vowel").length() + 1);
+        if (secondAnimal.startsWith(appResource.getString("indefinite-article-consonant"))) {
+            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-consonant").length());
+        } else if (secondAnimal.startsWith(appResource.getString("indefinite-article-vowel"))) {
+            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-vowel").length());
         }
 
-        System.out.printf("%s %s %s %s %s.\n" + "%s",
+        System.out.printf("%s %s%s %s %s%s.\n" + "%s",
                 appResource.getString("fact-start"),
-                rootAnimal, appResource.getString("fact-middle"),
-                secondArticle, secondAnimal,
+                secondArticle, secondAnimal, appResource.getString("fact-middle"),
+                article, rootAnimal,
                 appResource.getString("examples"));
 
         String distinct = getDistinct();
@@ -186,21 +190,21 @@ public class GuessingGame {
         database.set(validator.stringToObject("data"), validator.stringToObject(distinct));
 
         System.out.println(appResource.getString("learnt-facts"));
-        System.out.printf("- %s ", appResource.getString("definite-article"));
+        System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
         if (!isTrue) {
             System.out.println(validator.generateStatement(distinct, rootAnimal, false));
-            System.out.printf("- %s ", appResource.getString("definite-article"));
+            System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
             System.out.println(validator.generateStatement(distinct, secondAnimal, true));
             database.set(validator.stringToObject("yes"),
-                    validator.generateSingleValue(article + " " + rootAnimal));
+                    validator.generateSingleValue(article +  rootAnimal));
             database.set(validator.stringToObject("no"),
-                    validator.generateSingleValue(secondArticle + " " + secondAnimal));
+                    validator.generateSingleValue(secondArticle + secondAnimal));
         } else {
             System.out.println(validator.generateStatement(distinct, rootAnimal, true));
-            System.out.printf("- %s ", appResource.getString("definite-article"));
+            System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
             System.out.println(validator.generateStatement(distinct, secondAnimal, false));
             database.set(validator.stringToObject("yes"),
-                    validator.generateSingleValue(secondArticle + " " + secondAnimal));
+                    validator.generateSingleValue(secondArticle + secondAnimal));
             database.set(validator.stringToObject("no"),
                     validator.generateSingleValue(article + " " + rootAnimal));
         }
@@ -246,10 +250,10 @@ public class GuessingGame {
 
         String secondAnimal = scanner.nextLine().toLowerCase();
         String secondArticle = validator.validateAnimal(secondAnimal);
-        if (secondAnimal.startsWith(appResource.getString("indefinite-article-consonant") + " ")) {
-            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-consonant").length() + 1);
-        } else if (secondAnimal.startsWith(appResource.getString("indefinite-article-vowel") + " ")) {
-            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-vowel").length() + 1);
+        if (secondAnimal.startsWith(appResource.getString("indefinite-article-consonant"))) {
+            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-consonant").length());
+        } else if (secondAnimal.startsWith(appResource.getString("indefinite-article-vowel"))) {
+            secondAnimal = secondAnimal.substring(appResource.getString("indefinite-article-vowel").length());
         }
 
         System.out.printf("%s %s %s %s %s.\n" + "%s",
@@ -265,21 +269,21 @@ public class GuessingGame {
                 validator.stringToObject(distinct));
 
         System.out.println(appResource.getString("learnt-facts"));
-        System.out.printf("- %s ", appResource.getString("definite-article"));
+        System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
         if (!isTrue) {
             System.out.println(validator.generateStatement(distinct, rootAnimal, false));
-            System.out.printf("- %s ", appResource.getString("definite-article"));
+            System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
             System.out.println(validator.generateStatement(distinct, secondAnimal, true));
             database.set(validator.generateListPath(leafPath, "yes"),
                     validator.generateSingleValue(rootAnimal));
             database.set(validator.generateListPath(leafPath, "no"),
-                    validator.generateSingleValue(secondArticle + " " + secondAnimal));
+                    validator.generateSingleValue(secondArticle + secondAnimal));
         } else {
             System.out.println(validator.generateStatement(distinct, rootAnimal, true));
-            System.out.printf("- %s ", appResource.getString("definite-article"));
+            System.out.printf("- %s ", appResource.getString("definite-article-uppercase"));
             System.out.println(validator.generateStatement(distinct, secondAnimal, false));
             database.set(validator.generateListPath(leafPath, "yes"),
-                    validator.generateSingleValue(secondArticle + " " + secondAnimal));
+                    validator.generateSingleValue(secondArticle + secondAnimal));
             database.set(validator.generateListPath(leafPath, "no"),
                     validator.generateSingleValue(rootAnimal));
         }
@@ -294,13 +298,15 @@ public class GuessingGame {
         scanner.nextLine();
         List<String> currentPath = new ArrayList<>();
         while (true) {
-            System.out.println(validator.generateQuestion(database.get(
-                    validator.generateListPath(currentPath, "data"))));
-            boolean isTrue = validator.query();
             List<String> checkLeafPath = new ArrayList<>(currentPath);
             checkLeafPath.add("yes");
             boolean exists = database.get(validator
                     .generateListPath(checkLeafPath, "data")) != null;
+
+            System.out.println(validator.generateQuestion(database.get(
+                    validator.generateListPath(currentPath, "data")), exists));
+            boolean isTrue = validator.query();
+
 
             if (isTrue) {
                 currentPath.add("yes");
